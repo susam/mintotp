@@ -27,12 +27,25 @@ Contents
 Introduction
 ------------
 
+TOTP stands for Time-based One-Time Password. At the heart of the TOTP
+algorithm lies the HOTP algorithm. HOTP stands for HMAC-based One-Time
+Password. Here are the relevant RFCs to learn more about these
+algorithms:
+
+  - [RFC 2104]: HMAC: Keyed-Hashing for Message Authentication
+  - [RFC 4226]: HOTP: An HMAC-Based One-Time Password Algorithm
+  - [RFC 6238]: TOTP: Time-Based One-Time Password Algorithm
+
+[RFC 2104]: https://tools.ietf.org/html/rfc2104
+[RFC 4226]: https://tools.ietf.org/html/rfc4226
+[RFC 6238]: https://tools.ietf.org/html/rfc6238
+
 The source code in [totp.py](totp.py) contains toy code to show how TOTP
 values are generated from a secret key and current time. It's just 26
-lines of code (actually 19 lines if we ignore the blank lines). There
-are no comments in the code, so a brief description of the code is
-presented in this section. Here is the entire code presented once again
-for convenience:
+lines of code (actually 18 lines if we ignore the shebang and blank
+lines). There are no comments in the code, so a brief description of the
+code is presented in this section. Here is the entire code presented
+once again for convenience:
 
 ```python
 #!/usr/bin/python3
@@ -63,32 +76,20 @@ if __name__ == '__main__':
         print(totp(secret))
 ```
 
-TOTP stands for Time-based One-Time Password. At the heart of the TOTP
-algorithm lies the HOTP algorithm. HOTP stands for HMAC-based One-Time
-Password. Here are the relevant RFCs to learn more about these
-algorithms:
-
-  - [RFC 2104]: HMAC: Keyed-Hashing for Message Authentication
-  - [RFC 4226]: HOTP: An HMAC-Based One-Time Password Algorithm
-  - [RFC 6238]: TOTP: Time-Based One-Time Password Algorithm
-
-[RFC 2104]: https://tools.ietf.org/html/rfc2104
-[RFC 4226]: https://tools.ietf.org/html/rfc4226
-[RFC 6238]: https://tools.ietf.org/html/rfc6238
-[RFC 2104-5]: https://tools.ietf.org/html/rfc4226#section-5
-
 In the code above, we use the `hmac` module available in the Python
 standard library to implement HOTP. The implementation can be found in
-the `hotp()` function. It is a simple function with just 7 lines of
-code. It is a pretty straightforward implementation of [RFC 2104:
-Section 5: HOTP Algorithm][RFC 2104-5]. It takes a Base32-encoded secret
-key and a counter as input. It returns a 6-digit HOTP value.
+the `hotp()` function. It is a a pretty straightforward implementation
+of [RFC 2104: Section 5: HOTP Algorithm][RFC 2104-5]. It takes a
+Base32-encoded secret key and a counter as input. It returns a 6-digit
+HOTP value.
 
 The `totp()` function implements the TOTP algorithm. It is a thin
 wrapper around the HOTP algorithm. The TOTP value is obtained by
 invoking the HOTP function with the secret key and the number of time
 intervals (30 second intervals by default) that have elapsed since Unix
 epoch (1970-01-01 00:00:00 UTC).
+
+[RFC 2104-5]: https://tools.ietf.org/html/rfc4226#section-5
 
 
 Get Started
