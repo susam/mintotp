@@ -22,5 +22,5 @@ def totp(secret, interval=30):
 
 
 if __name__ == '__main__':
-    for secret in sys.argv[1:]:
-        print(totp(secret))
+    for secret in sys.stdin:
+        print(totp(secret.strip()))

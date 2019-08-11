@@ -20,7 +20,7 @@ Contents
   * [With Base32 Key](#with-base32-key)
   * [With Encrypted Base32 Key](#with-encrypted-base32-key)
   * [With QR Code](#with-qr-code)
-  * [With QR Code](#with-encrypted-qr-code)
+  * [With Encrypted QR Code](#with-encrypted-qr-code)
   * [Multiple Keys](#multiple-keys)
 * [Caution](#caution)
 * [License](#license)
@@ -75,7 +75,7 @@ def totp(secret, interval=30):
 
 if __name__ == '__main__':
     for secret in sys.argv[1:]:
-        print(totp(secret))
+        print(totp(secret.strip()))
 ```
 
 In the code above, we use the `hmac` module available in the Python
@@ -114,7 +114,7 @@ generate TOTP values for the purpose of logging into that account.
  1. Enter this command:
 
     ```shell
-    python3 totp.py ZYTYYE5FOAGW5ML7LRWUL4WTZLNJAMZS
+    echo ZYTYYE5FOAGW5ML7LRWUL4WTZLNJAMZS | python3 totp.py
     ```
 
     The output should be a 6-digit TOTP value.
@@ -170,24 +170,24 @@ The steps below show the usage of GPG to encrypt our example secret key.
     ZYTYYE5FOAGW5ML7LRWUL4WTZLNJAMZS
     ```
 
-    Press <kbd>Enter</kbd> to end the line. Press the <kbd>control</kbd>
-    + <kbd>d</kbd> to end input. The encrypted secret key would be saved
+    Press <kbd>Enter</kbd> to end the line. Press <kbd>control</kbd> +
+    <kbd>d</kbd> to end input. The encrypted secret key would be saved
     in a file named `secret.gpg`.
 
  3. Generate TOTP value from the encrypted key:
 
     ```shell
-    python3 totp.py $(gpg -q -o - secret.gpg)
+    gpg -q -o - secret.gpg | python3 totp.py
     ```
 
  4. You can also generate TOTP value and copy it to system clipboard:
 
     ```shell
     # On macOS
-    python3 totp.py $(gpg -q -o - secret.gpg) | pbcopy
+    gpg -q -o - secret.gpg | python3 totp.py | pbcopy
 
     # On Linux
-    python3 totp.py $(gpg -q -o - secret.gpg) | xclip
+    gpg -q -o - secret.gpg | python3 totp.py | xclip
     ```
 
     Now you can easily paste the TOTP value to any login form that
@@ -201,10 +201,10 @@ The steps below show the usage of GPG to encrypt our example secret key.
 
     ```shell
     # On macOS
-    python3 totp.py $(gpg -q -o - secret.gpg) | tee /dev/stderr | pbcopy
+    gpg -q -o - secret.gpg | python3 totp.py | tee /dev/stderr | pbcopy
 
     # On Linux
-    python3 totp.py $(gpg -q -o - secret.gpg) | tee /dev/stderr | xclip
+    gpg -q -o - secret.gpg | python3 totp.py | tee /dev/stderr | xclip
     ```
 
 [strong passphrase]: https://www.gnupg.org/faq/gnupg-faq.html#strong_passphrase
@@ -246,7 +246,7 @@ The steps below show the usage of GPG to encrypt our example secret key.
     and feed it to the Python script.
 
     ```shell
-    python3 totp.py $(zbarimg -q secret1.png | sed 's/.*secret=\([^&]*\).*/\1/')
+    zbarimg -q secret1.png | sed 's/.*secret=\([^&]*\).*/\1/' | python3 totp.py
     ```
 
  5. Scan the QR code shown above in step 3 with a TOTP-based
@@ -304,17 +304,17 @@ The steps below show the usage of GPG to encrypt our example QR code.
  4. Generate TOTP value from the encrypted QR code file:
 
     ```shell
-    python3 totp.py $(zbarimg -q <(gpg -q -o - secret1.png.gpg) | sed 's/.*secret=\([^&]*\).*/\1/')
+    zbarimg -q <(gpg -q -o - secret1.png.gpg) | sed 's/.*secret=\([^&]*\).*/\1/' | python3 totp.py
     ```
 
  4. You can also generate the TOTP value and copy it to system clipboard:
 
     ```shell
     # On macOS
-    python3 totp.py $(zbarimg -q <(gpg -q -o - secret1.png.gpg) | sed 's/.*secret=\([^&]*\).*/\1/') | pbcopy
+    zbarimg -q <(gpg -q -o - secret1.png.gpg) | sed 's/.*secret=\([^&]*\).*/\1/' | python3 totp.py | pbcopy
 
     # On Linux
-    python3 totp.py $(zbarimg -q <(gpg -q -o - secret1.png.gpg) | sed 's/.*secret=\([^&]*\).*/\1/') | xclip
+    zbarimg -q <(gpg -q -o - secret1.png.gpg) | sed 's/.*secret=\([^&]*\).*/\1/' | python3 totp.py | xclip
     ```
 
  5. In case you want to see the TOTP value on the terminal while it is
@@ -322,29 +322,32 @@ The steps below show the usage of GPG to encrypt our example QR code.
 
     ```shell
     # On macOS
-    python3 totp.py $(zbarimg -q <(gpg -q -o - secret1.png.gpg) | sed 's/.*secret=\([^&]*\).*/\1/') | tee /dev/stderr | pbcopy
+    zbarimg -q <(gpg -q -o - secret1.png.gpg) | sed 's/.*secret=\([^&]*\).*/\1/' | python3 totp.py | tee /dev/stderr | pbcopy
 
     # On Linux
-    python3 totp.py $(zbarimg -q <(gpg -q -o - secret1.png.gpg) | sed 's/.*secret=\([^&]*\).*/\1/') | tee /dev/stderr | xclip
+    zbarimg -q <(gpg -q -o - secret1.png.gpg) | sed 's/.*secret=\([^&]*\).*/\1/' | python3 totp.py | tee /dev/stderr | xclip
     ```
 
 ### Multiple Keys
 
 The script [`totp.py`](totp.py) accepts one or more Base32 secret keys
-as command line arguments and generates TOTP values from the secret
-keys. Here are a few examples that shows this:
+as standard input. Each key must occur in its own line.
 
  1. Generate multiple TOTP values, one for each of multiple Base32 keys:
 
     ```shell
-    python3 totp.py ZYTYYE5FOAGW5ML7LRWUL4WTZLNJAMZS PW4YAYYZVDE5RK2AOLKUATNZIKAFQLZO
+    python3 totp.py <<eof
+    ZYTYYE5FOAGW5ML7LRWUL4WTZLNJAMZS
+    PW4YAYYZVDE5RK2AOLKUATNZIKAFQLZO
+    eof
     ```
 
  2. Generate TOTP values for multiple keys in multiple QR codes:
 
     ```shell
-    python3 totp.py $(zbarimg -q *.png | sed 's/.*secret=\([^&]*\).*/\1/')
+    zbarimg -q *.png | sed 's/.*secret=\([^&]*\).*/\1/' | python3 totp.py
     ```
+
 
 Caution
 -------
