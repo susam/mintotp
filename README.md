@@ -57,11 +57,11 @@ import sys
 import time
 
 
-def hotp(secret, counter, digits=6, algo='sha1'):
+def hotp(secret, counter, digits=6, digest='sha1'):
     padding = '=' * ((8 - len(secret)) % 8)
     secret_bytes = base64.b32decode(secret.upper() + padding)
     counter_bytes = struct.pack(">Q", counter)
-    mac = hmac.digest(secret_bytes, counter_bytes, algo)
+    mac = hmac.new(secret_bytes, counter_bytes, digest).digest()
     offset = mac[-1] & 0x0f
     truncated = struct.unpack('>L', mac[offset:offset+4])[0] & 0x7fffffff
     return str(truncated)[-digits:].rjust(digits, '0')
