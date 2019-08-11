@@ -78,8 +78,8 @@ if __name__ == '__main__':
 
 In the code above, we use the `hmac` module available in the Python
 standard library to implement HOTP. The implementation can be found in
-the `hotp()` function. It is a a pretty straightforward implementation
-of [RFC 2104: Section 5: HOTP Algorithm][RFC 2104-5]. It takes a
+the `hotp()` function. It is a pretty straightforward implementation of
+[RFC 2104: Section 5: HOTP Algorithm][RFC 2104-5]. It takes a
 Base32-encoded secret key and a counter as input. It returns a 6-digit
 HOTP value.
 
