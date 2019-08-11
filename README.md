@@ -18,8 +18,10 @@ Contents
 * [Introduction](#introduction)
 * [Get Started](#get-started)
   * [With Base32 Key](#with-base32-key)
+  * [With Encrypted Base32 Key](#with-encrypted-base32-key)
   * [With QR Code](#with-qr-code)
-* [Usage](#usage)
+  * [With QR Code](#with-encrypted-qr-code)
+  * [Multiple Keys](#multiple-keys)
 * [Caution](#caution)
 * [License](#license)
 
@@ -40,9 +42,9 @@ algorithms:
 [RFC 4226]: https://tools.ietf.org/html/rfc4226
 [RFC 6238]: https://tools.ietf.org/html/rfc6238
 
-The source code in [totp.py](totp.py) contains toy code to show how TOTP
-values are generated from a secret key and current time. It's just 26
-lines of code (actually 18 lines if we ignore the shebang and blank
+The source code in [`totp.py`](totp.py) contains toy code to show how
+TOTP values are generated from a secret key and current time. It's just
+26 lines of code (actually 18 lines if we ignore the shebang and blank
 lines). There are no comments in the code, so a brief description of the
 code is presented in this section. Here is the entire code presented
 once again for convenience:
@@ -95,26 +97,117 @@ epoch (1970-01-01 00:00:00 UTC).
 Get Started
 -----------
 
+This section presents a few examples to quickly get started with the
+[`totp.py`](totp.py) script.
+
+Note that this section uses a few example secret keys and QR codes. They
+are merely examples that come with this project for you to quickly test
+the script with. They should not be used for any real account that
+requires TOTP-based two-factor authentication. Usually, the issuer of a
+real account (such as an account on a website or an organization) would
+also issue a secret key or secret QR code to you which you must use to
+generate TOTP values for the purpose of logging into that account.
+
+
 ### With Base32 Key
 
  1. Enter this command:
 
-        python3 totp.py ZYTYYE5FOAGW5ML7LRWUL4WTZLNJAMZS
+    ```shell
+    python3 totp.py ZYTYYE5FOAGW5ML7LRWUL4WTZLNJAMZS
+    ```
 
     The output should be a 6-digit TOTP value.
 
- 2. If you have Google Authenticator on your mobile phone, open it, tap
-    its add button (`+` sign), select "Enter a provided key", enter any
-    account name and "Time-based" and enter the following key:
+ 2. Add the following key to a TOTP-based authenticator app:
 
-        ZYTYYE5FOAGW5ML7LRWUL4WTZLNJAMZS
+    ```
+    ZYTYYE5FOAGW5ML7LRWUL4WTZLNJAMZS
+    ```
 
-     Set the dropdown menu to "Time-based" and tap the "Add" button. A
-     6-digit TOTP value should appear for the new key.
+    For example, if you have Google Authenticator on your mobile phone,
+    open it, tap the button with plus sign, select "Enter a provided
+    key", enter any account name and "Time-based" and enter the
+    above key. Set the dropdown menu to "Time-based" and tap the "Add"
+    button. A 6-digit TOTP value should appear for the new key.
 
  3. Run the command in step 1 again and verify that the TOTP value
     printed by the Python script matches the TOTP value that appears in
     Google Authenticator.
+
+
+### With Encrypted Base32 Key
+
+While the previous example uses an example key to show how this script
+works, in case you decide to use this script to generate TOTP values
+from a real secret key for a real account, you must encrypt your secret
+key to keep it safe. Even so, please read the [Caution](#caution)
+section once before using this script to generate TOTP values for a real
+account.
+
+The steps below show the usage of GPG to encrypt our example secret key.
+
+ 1. Install GNU Privacy Guard (also known as GnuPG or GPG):
+
+    ```shell
+    # On macOS
+    brew install gnupg
+
+    # On Debian, Ubuntu, etc.
+    apt-get install gnupg
+    ```
+
+ 2. Encrypt the secret key using GPG. First enter this command:
+
+    ```shell
+    gpg -c -o secret.gpg
+    ```
+
+    Then enter a [strong passphrase] when it prompts for it. Re-enter
+    the passphase to confirm it. Then paste the following key as input:
+
+    ```
+    ZYTYYE5FOAGW5ML7LRWUL4WTZLNJAMZS
+    ```
+
+    Press <kbd>Enter</kbd> to end the line. Press the <kbd>control</kbd>
+    + <kbd>d</kbd> to end input. The encrypted secret key would be saved
+    in a file named `secret.gpg`.
+
+ 3. Generate TOTP value from the encrypted key:
+
+    ```shell
+    python3 totp.py $(gpg -q -o - secret.gpg)
+    ```
+
+ 4. You can also generate TOTP value and copy it to system clipboard:
+
+    ```shell
+    # On macOS
+    python3 totp.py $(gpg -q -o - secret.gpg) | pbcopy
+
+    # On Linux
+    python3 totp.py $(gpg -q -o - secret.gpg) | xclip
+    ```
+
+    Now you can easily paste the TOTP value to any login form that
+    requires it. On Linux, of course, you need to have `xclip` installed
+    to use it. On Debian, Ubuntu, etc. it can be installed with the
+    `apt-get install xclip` command. To paste the value copied into the
+    clipboard by `xclip`, middle-click on mouse.
+
+ 5. In case you want to see the TOTP value on the terminal while it is
+    also copied to the system clipboard, use one of these commands:
+
+    ```shell
+    # On macOS
+    python3 totp.py $(gpg -q -o - secret.gpg) | tee /dev/stderr | pbcopy
+
+    # On Linux
+    python3 totp.py $(gpg -q -o - secret.gpg) | tee /dev/stderr | xclip
+    ```
+
+[strong passphrase]: https://www.gnupg.org/faq/gnupg-faq.html#strong_passphrase
 
 
 ### With QR Code
@@ -134,8 +227,7 @@ Get Started
     The QR code above can also be found in this file:
     [secret1.png](secret1.png).
 
- 3. Enter this command to data in the QR code:
-
+ 3. Enter this command to read the data in the QR code:
 
     ```shell
     zbarimg -q secret1.png
@@ -157,22 +249,90 @@ Get Started
     python3 totp.py $(zbarimg -q secret1.png | sed 's/.*secret=\([^&]*\).*/\1/')
     ```
 
- 5. If you have Google Authenticator on your mobile phone, open it, tap
-    its add button (`+` sign), select "Scan a barcode", and scan the QR
-    code shown above in step 3. A 6-digit TOTP value should appear for
-    the new key.
+ 5. Scan the QR code shown above in step 3 with a TOTP-based
+    authenticator app. For example, if you have Google Authenticator on
+    your mobile phone, open it, tap the button with plus sign, select
+    "Scan a barcode", and scan the QR code shown above in step 3. A
+    6-digit TOTP value should appear for the new key.
 
  6. Run the command in step 3 again and verify that the TOTP value
     printed by the Python script matches the TOTP value that appears in
     Google Authenticator.
 
 
-Usage
------
+### With Encrypted QR Code
 
-The script [totp.py](totp.py) accepts one or more Base32 secret keys as
-command line arguments and generates TOTP values from the secret keys.
-Here are a few examples:
+While the previous example uses an example QR code to show how this
+script works, in case you decide to use this script to generate TOTP
+values from a real QR code for a real account, you must encrypt your QR
+code to keep it safe. Even so, please read the [Caution](#caution)
+section once before using this script to generate TOTP values for a real
+account.
+
+The steps below show the usage of GPG to encrypt our example QR code.
+
+ 1. Install GNU Privacy Guard (also known as GnuPG or GPG):
+
+    ```shell
+    # On macOS
+    brew install gnupg
+
+    # On Debian, Ubuntu, etc.
+    apt-get install gnupg
+    ```
+
+ 2. Encrypt the QR code using GPG. First enter this command:
+
+    ```shell
+    gpg -c secret1.png
+    ```
+
+    Then enter a [strong passphrase] when it prompts for it. Re-enter
+    the passphase to confirm it. The encrypted QR code would be saved in
+    a file named `secret1.png.gpg`.
+
+ 3. Delete the unencrypted QR code file securely:
+
+    ```shell
+    # On macOS
+    rm -P secret1.png
+
+    # On Linux
+    shred -u secret1.png
+    ```
+
+ 4. Generate TOTP value from the encrypted QR code file:
+
+    ```shell
+    python3 totp.py $(zbarimg -q <(gpg -q -o - secret1.png.gpg) | sed 's/.*secret=\([^&]*\).*/\1/')
+    ```
+
+ 4. You can also generate the TOTP value and copy it to system clipboard:
+
+    ```shell
+    # On macOS
+    python3 totp.py $(zbarimg -q <(gpg -q -o - secret1.png.gpg) | sed 's/.*secret=\([^&]*\).*/\1/') | pbcopy
+
+    # On Linux
+    python3 totp.py $(zbarimg -q <(gpg -q -o - secret1.png.gpg) | sed 's/.*secret=\([^&]*\).*/\1/') | xclip
+    ```
+
+ 5. In case you want to see the TOTP value on the terminal while it is
+    also copied to the system clipboard, use one of these commands:
+
+    ```shell
+    # On macOS
+    python3 totp.py $(zbarimg -q <(gpg -q -o - secret1.png.gpg) | sed 's/.*secret=\([^&]*\).*/\1/') | tee /dev/stderr | pbcopy
+
+    # On Linux
+    python3 totp.py $(zbarimg -q <(gpg -q -o - secret1.png.gpg) | sed 's/.*secret=\([^&]*\).*/\1/') | tee /dev/stderr | xclip
+    ```
+
+### Multiple Keys
+
+The script [`totp.py`](totp.py) accepts one or more Base32 secret keys
+as command line arguments and generates TOTP values from the secret
+keys. Here are a few examples that shows this:
 
  1. Generate multiple TOTP values, one for each of multiple Base32 keys:
 
@@ -185,20 +345,6 @@ Here are a few examples:
     ```shell
     python3 totp.py $(zbarimg -q *.png | sed 's/.*secret=\([^&]*\).*/\1/')
     ```
-
- 3. Generate TOTP value for a key and copy it to clipboard :wink: on macOS:
-
-    ```shell
-    python3 totp.py ZYTYYE5FOAGW5ML7LRWUL4WTZLNJAMZS | pbcopy
-    ```
-
- 4. Generate TOTP value for a key, print it, and copy it to clipboard on
-    macOS.
-
-    ```shell
-    python3 totp.py ZYTYYE5FOAGW5ML7LRWUL4WTZLNJAMZS | tee /dev/stderr | pbcopy
-    ```
-
 
 Caution
 -------
