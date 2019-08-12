@@ -1,7 +1,7 @@
-Toy TOTP Generator
-==================
+MinTOTP
+=======
 
-This is a tiny toy TOTP generator.
+This is a minimal TOTP generator written in 19 lines of Python code.
 
 [![View Source][Source SVG]][Source File]
 [![MIT License][License SVG]][L]
@@ -31,8 +31,8 @@ Introduction
 
 TOTP stands for Time-based One-Time Password. At the heart of the TOTP
 algorithm lies the HOTP algorithm. HOTP stands for HMAC-based One-Time
-Password. Here are the relevant RFCs to learn more about these
-algorithms:
+Password. HMAC stands for Hash-based Message Authentication Code. Here
+are the relevant RFCs to learn more about these algorithms:
 
   - [RFC 2104]: HMAC: Keyed-Hashing for Message Authentication
   - [RFC 4226]: HOTP: An HMAC-Based One-Time Password Algorithm
@@ -42,7 +42,7 @@ algorithms:
 [RFC 4226]: https://tools.ietf.org/html/rfc4226
 [RFC 6238]: https://tools.ietf.org/html/rfc6238
 
-The source code in [`totp.py`](totp.py) contains toy code to show how
+The source code in [`totp.py`](totp.py) contains the code to show how
 TOTP values are generated from a secret key and current time. It's just
 26 lines of code (actually 18 lines if we ignore the shebang and blank
 lines). There are no comments in the code, so a brief description of the
@@ -98,11 +98,11 @@ Get Started
 -----------
 
 This section presents a few examples to quickly get started with the
-[`totp.py`](totp.py) script.
+[`totp.py`](totp.py) program.
 
 Note that this section uses a few example secret keys and QR codes. They
 are merely examples that come with this project for you to quickly test
-the script with. They should not be used for any real account that
+the program with. They should not be used for any real account that
 requires TOTP-based two-factor authentication. Usually, the issuer of a
 real account (such as an account on a website or an organization) would
 also issue a secret key or secret QR code to you which you must use to
@@ -132,18 +132,16 @@ generate TOTP values for the purpose of logging into that account.
     button. A 6-digit TOTP value should appear for the new key.
 
  3. Run the command in step 1 again and verify that the TOTP value
-    printed by the Python script matches the TOTP value that appears in
-    Google Authenticator.
+    printed by the Python program matches the TOTP value that appears in
+    the authenticator app.
 
 
 ### With Encrypted Base32 Key
 
-While the previous example uses an example key to show how this script
-works, in case you decide to use this script to generate TOTP values
-from a real secret key for a real account, you must encrypt your secret
-key to keep it safe. Even so, please read the [Caution](#caution)
-section once before using this script to generate TOTP values for a real
-account.
+While the previous example uses an example key to show how this tool
+works, in case you decide to use this tool to generate TOTP values from
+a real secret key for a real account, you must encrypt your secret key
+to keep it safe.
 
 The steps below show the usage of GPG to encrypt our example secret key.
 
@@ -243,7 +241,7 @@ The steps below show the usage of GPG to encrypt our example secret key.
     used in the previous section.
 
  4. Now enter this command to extract the secret key from the QR code
-    and feed it to the Python script.
+    and feed it to the Python tool.
 
     ```shell
     zbarimg -q secret1.png | sed 's/.*secret=\([^&]*\).*/\1/' | python3 totp.py
@@ -256,18 +254,16 @@ The steps below show the usage of GPG to encrypt our example secret key.
     6-digit TOTP value should appear for the new key.
 
  6. Run the command in step 3 again and verify that the TOTP value
-    printed by the Python script matches the TOTP value that appears in
-    Google Authenticator.
+    printed by the Python tool matches the TOTP value that appears in
+    the authenticator app.
 
 
 ### With Encrypted QR Code
 
-While the previous example uses an example QR code to show how this
-script works, in case you decide to use this script to generate TOTP
-values from a real QR code for a real account, you must encrypt your QR
-code to keep it safe. Even so, please read the [Caution](#caution)
-section once before using this script to generate TOTP values for a real
-account.
+While the previous example uses an example QR code to show how this tool
+works, in case you decide to use this tool to generate TOTP values from
+a real QR code for a real account, you must encrypt your QR code to keep
+it safe.
 
 The steps below show the usage of GPG to encrypt our example QR code.
 
@@ -330,8 +326,8 @@ The steps below show the usage of GPG to encrypt our example QR code.
 
 ### Multiple Keys
 
-The script [`totp.py`](totp.py) accepts one or more Base32 secret keys
-as standard input. Each key must occur in its own line.
+This tool accepts one or more Base32 secret keys as standard input. Each
+key must occur in its own line.
 
  1. Generate multiple TOTP values, one for each of multiple Base32 keys:
 
@@ -352,19 +348,29 @@ as standard input. Each key must occur in its own line.
 Caution
 -------
 
-This project is only a proof of concept to demonstrate how TOTP values
-are generated. It can be tempting to use this to generate TOTP values on
-a desktop/laptop device while logging into a website that requires
-TOTP-based two-factor authentication from the same device. However,
-doing so defeats the purpose of two-factor authentication (2FA). If your
-desktop/laptop device is compromised, then both authentication factors
-would be compromised. The attacker can steal the first authentication
-factor that only you should know (e.g., password) by running a key
-logger on the compromised device. The attacker can also steal the second
-authentication factor that only you should have (e.g., TOTP secret key)
-because it would be read by this script on the same compromised device;
-if this script can read the TOTP secret key on the compromised device,
-so can the attacker.
+It can be tempting to use this tool to generate TOTP values on a
+desktop/laptop device while logging into a website that requires
+TOTP-based two-factor authentication from the same device. One should be
+aware that this trades some security for convenience.
+
+Two-factor authentication (2FA) relies on the user presenting two pieces
+of evidence (factors) to an authentication system: something only the
+user knows and something only the user has.
+
+If this tool is run to generate TOTP values on the same desktop/laptop
+device that you are using to log into a website, then you should
+consider that if your desktop/laptop device is compromised, then both
+authentication factors can be compromised. The attacker can steal the
+first authentication factor that only you should know (e.g., password)
+by running a key logger on the compromised device. The attacker can also
+steal the second authentication factor that only you should have (e.g.,
+TOTP secret key) because it would be read by this tool on the same
+compromised device; if this tool can read the TOTP secret key on the
+compromised device, so can the attacker.
+
+Having clarified that, it is still safer to have 2FA than not have it at
+all. Whether trading some security for convenience is acceptable to you
+or not is something you need to decide for yourself.
 
 
 License
