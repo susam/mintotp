@@ -510,7 +510,7 @@ or not is something you need to decide for yourself.
 Alternative: OATH Toolkit
 -------------------------
 
-There is an `oauthtool` command available in OATH Toolkit that can also
+There is an `oathtool` command available in OATH Toolkit that can also
 generate TOTP values from TOTP secret keys. However, one of the issues
 currently with `oathtool` is that it requires the secret key to be
 provided as a command line argument which is generally insecure because
@@ -523,7 +523,7 @@ See the following two posts to read more about this:
 [post1]: https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=839278
 [post2]: https://lists.gnu.org/archive/html/oath-toolkit-help/2012-01/msg00008.html
 
-The `oauthtool` command is intended to be used as a debugging tool and
+The `oathtool` command is intended to be used as a debugging tool and
 not for generating real TOTP values for real accounts. It would remain
 so until the issue described in the two URLs above is fixed. However, it
 is still good to be aware that `oathtool` can do what MinTOTP does. This
