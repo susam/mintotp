@@ -28,6 +28,7 @@ Contents
   * [With Encrypted QR Code](#with-encrypted-qr-code)
   * [Multiple Keys](#multiple-keys)
 * [Tradeoff](#tradeoff)
+* [Alternative: OATH Toolkit](#alternative-oath-toolkit)
 * [Resources](#resources)
 * [License](#license)
 * [Thanks](#thanks)
@@ -275,6 +276,7 @@ that you want to use to generate TOTP values.
     brew install gnupg
 
     # On Debian, Ubuntu, etc.
+    apt-get update
     apt-get install gnupg
     ```
 
@@ -398,6 +400,7 @@ you want to use to generate TOTP values.
     brew install gnupg
 
     # On Debian, Ubuntu, etc.
+    apt-get update
     apt-get install gnupg
     ```
 
@@ -499,6 +502,82 @@ might find this tool helpful. It allows to trade off some security for
 convenience which is still more secure than not having 2FA or MFA at
 all. Whether trading some security for convenience is acceptable to you
 or not is something you need to decide for yourself.
+
+
+Alternative: OATH Toolkit
+-------------------------
+
+There is an `oauthtool` command available in OATH Toolkit that can also
+generate TOTP values from TOTP secret keys. However, one of the issues
+currently with `oathtool` is that it requires the secret key to be
+provided as a command line argument which is generally insecure because
+command line arguments are visible to all system users and processes.
+See the following two posts to read more about this:
+
+  - [Debian bug report: oathtool: has no secure way to provide a key][post1]
+  - [OATH-Toolkit-help: oathtool should not require secret key on command line][post2]
+
+[post1]: https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=839278
+[post2]: https://lists.gnu.org/archive/html/oath-toolkit-help/2012-01/msg00008.html
+
+The `oauthtool` command is intended to be used as a debugging tool and
+not for generating real TOTP values for real accounts. It would remain
+so until the issue described in the two URLs above is fixed. However, it
+is still good to be aware that `oathtool` can do what MinTOTP does. This
+section presents some examples about this:
+
+ 1. Install OATH Toolkit:
+
+    ```shell
+    # On macOS
+    brew install oath-toolkit
+
+    # On Debian, Ubuntu, etc.
+    apt-get update
+    apt-get install oathtool
+    ```
+
+ 2. Generate TOTP from a Base32 key:
+
+    ```shell
+    oathtool --totp -b ZYTYYE5FOAGW5ML7LRWUL4WTZLNJAMZS
+    ```
+
+ 3. Generate TOTP from an encrypted Base32 key:
+
+    ```shell
+    oathtool --totp -b $(gpg -q -o - secret.gpg)
+    ```
+
+    Section [With Encrypted Base32 Key](#with-encrypted-base32-key)
+    explains how to create the encrypted key (`secret.gpg`) with GPG.
+
+ 4. Generate TOTP from a QR code:
+
+    ```shell
+    oathtool --totp -b $(zbarimg -q secret1.png | sed 's/.*secret=\([^&]*\).*/\1/')
+    ```
+
+ 5. Generate TOTP from an encrypted QR code:
+
+    ```shell
+    oathtool --totp -b $(zbarimg -q <(gpg -q -o - secret1.png.gpg) | sed 's/.*secret=\([^&]*\).*/\1/')
+    ```
+
+    Section [With Encrypted QR Code](#with-encrypted-qr-code) explains
+    how to create the encrypted QR code (`secret1.png.gpg`) with GPG.
+
+ 6. Generate TOTP value and copy it to system clipboard:
+
+    ```shell
+    # On macOS
+    oathtool --totp -b $(gpg -q -o - secret.gpg) | pbcopy
+    oathtool --totp -b $(zbarimg -q <(gpg -q -o - secret1.png.gpg) | sed 's/.*secret=\([^&]*\).*/\1/') | pbcopy
+
+    # On Linux
+    oathtool --totp -b $(gpg -q -o - secret.gpg) | xclip
+    oathtool --totp -b $(zbarimg -q <(gpg -q -o - secret1.png.gpg) | sed 's/.*secret=\([^&]*\).*/\1/') | xclip
+    ```
 
 
 Resources
