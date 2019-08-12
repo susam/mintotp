@@ -21,6 +21,9 @@ Contents
 
 * [Introduction](#introduction)
 * [Source Code](#source-code)
+* [Install](#install)
+  * [From PyPI](#from-pypi)
+  * [From GitHub](#from-github)
 * [Get Started](#get-started)
   * [With Base32 Key](#with-base32-key)
   * [With Encrypted Base32 Key](#with-encrypted-base32-key)
