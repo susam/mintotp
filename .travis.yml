@@ -1,0 +1,16 @@
+language: python
+
+python:
+  - "3.4"
+  - "3.5"
+  - "3.6"
+  - "3.7"
+
+install:
+  - make deps
+
+script:
+  - make checks
+
+after_success:
+  - coveralls

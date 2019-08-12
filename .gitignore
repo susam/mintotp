@@ -1,2 +1,18 @@
+# Ignore Vim swap files.
 *.sw?
+
+# Ignore macOS Desktop Services Store.
 .DS_Store
+
+# Ignore development files.
+venv
+user-venv
+
+# Ignore build files.
+*.pyc
+__pycache__/
+.coverage
+htmlcov/
+build/
+dist/
+mintotp.egg-info/

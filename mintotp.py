@@ -21,6 +21,10 @@ def totp(secret, interval=30):
     return hotp(secret, int(time.time() / interval))
 
 
-if __name__ == '__main__':
+def main():
     for secret in sys.stdin:
         print(totp(secret.strip()))
+
+
+if __name__ == '__main__':
+    main()
