@@ -30,6 +30,7 @@ Contents
   * [With QR Code](#with-qr-code)
   * [With Encrypted QR Code](#with-encrypted-qr-code)
   * [Multiple Keys](#multiple-keys)
+  * [Command Line Arguments](#command-line-arguments)
 * [Tradeoff](#tradeoff)
 * [Alternative: OATH Toolkit](#alternative-oath-toolkit)
 * [Resources](#resources)
@@ -96,23 +97,23 @@ import sys
 import time
 
 
-def hotp(secret, counter, digits=6, digest='sha1'):
-    padding = '=' * ((8 - len(secret)) % 8)
-    secret_bytes = base64.b32decode(secret.upper() + padding)
-    counter_bytes = struct.pack(">Q", counter)
-    mac = hmac.new(secret_bytes, counter_bytes, digest).digest()
+def hotp(key, counter, digits=6, digest='sha1'):
+    key = base64.b32decode(key.upper() + '=' * ((8 - len(key)) % 8))
+    counter = struct.pack('>Q', counter)
+    mac = hmac.new(key, counter, digest).digest()
     offset = mac[-1] & 0x0f
-    truncated = struct.unpack('>L', mac[offset:offset+4])[0] & 0x7fffffff
-    return str(truncated)[-digits:].rjust(digits, '0')
+    binary = struct.unpack('>L', mac[offset:offset+4])[0] & 0x7fffffff
+    return str(binary)[-digits:].rjust(digits, '0')
 
 
-def totp(secret, interval=30):
-    return hotp(secret, int(time.time() / interval))
+def totp(key, time_step=30, digits=6, digest='sha1'):
+    return hotp(key, int(time.time() / time_step), digits, digest)
 
 
 def main():
-    for secret in sys.stdin:
-        print(totp(secret.strip()))
+    args = [int(x) if x.isdigit() else x for x in sys.argv[1:]]
+    for key in sys.stdin:
+        print(totp(key.strip(), *args))
 
 
 if __name__ == '__main__':
@@ -473,6 +474,66 @@ key must occur in its own line.
     ```shell
     zbarimg -q *.png | sed 's/.*secret=\([^&]*\).*/\1/' | mintotp
     ```
+
+### Command Line Arguments
+
+In order to keep this tool as minimal as possible, it does not come with
+any command line options. In fact, it does not even have the `--help`
+option. It does support a few command line arguments though. Since there
+is no help output from the tool, this section describes the command line
+arguments for this tool.
+
+Here is a synopsis of the command line arguments supported by this tool:
+
+```
+mintotp [TIME_STEP [DIGITS [DIGEST]]]
+```
+
+Here is a description of each argument:
+
+  - `TIME_STEP`
+
+    TOTP time-step duration (in seconds) during which a TOTP value is
+    valid. A new TOTP value is generated after time-step duration
+    elapses. (Default: `30`)
+
+  - `DIGITS`
+
+    Number of digits in TOTP value. (Default: `6`)
+
+  - `DIGEST`
+
+    Cryptographic hash algorithm to use while generating TOTP value.
+    (Default: `sha1)
+
+    Possible values are `sha1`, `sha224`, `sha256`, `sha384`, and
+    `sha512`.
+
+Here are some usage examples of these command line arguments:
+
+ 1. Generate TOTP value with a time-step size of 60 seconds:
+
+    ```shell
+    mintotp 60 <<< ZYTYYE5FOAGW5ML7LRWUL4WTZLNJAMZS
+    ```
+
+ 2. Generate 8-digit TOTP value:
+
+    ```shell
+    mintotp 60 8 <<< ZYTYYE5FOAGW5ML7LRWUL4WTZLNJAMZS
+    ```
+
+ 3. Use SHA-256 hash algorithm to generate TOTP value:
+
+    ```shell
+    mintotp 60 6 sha256 <<< ZYTYYE5FOAGW5ML7LRWUL4WTZLNJAMZS
+    ```
+
+The behaviour of the tool is undefined if it is used in any way other
+than what is described above. For example, although surplus command line
+arguments are ignored currently, this behaviour may change in future, so
+what should happen in case of surplus arguments is left undefined in
+this document.
 
 
 Tradeoff

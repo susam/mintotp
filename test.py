@@ -29,25 +29,53 @@ class Test(unittest.TestCase):
             self.assertEqual(mintotp.totp(SECRET1), '626854')
             self.assertEqual(mintotp.totp(SECRET2), '093610')
 
-    def test_main(self):
-        with mock.patch('sys.stdin', [SECRET1]):
-            with mock.patch('time.time', return_value=0):
-                with mock.patch('builtins.print') as mock_print:
-                    mintotp.main()
-                    mock_print.assert_called_once_with('549419')
-        with mock.patch('sys.stdin', [SECRET1, SECRET2]):
-            with mock.patch('time.time', return_value=0):
-                with mock.patch('builtins.print') as mock_print:
-                    mintotp.main()
-                    self.assertEqual(mock_print.mock_calls,
-                                     [mock.call('549419'),
-                                      mock.call('009551')])
+    @mock.patch('time.time', mock.Mock(return_value=0))
+    @mock.patch('sys.argv', ['prog'])
+    @mock.patch('sys.stdin', [SECRET1])
+    @mock.patch('builtins.print')
+    def test_main_one_secret(self, mock_print):
+        mintotp.main()
+        mock_print.assert_called_once_with('549419')
 
-    def test_name(self):
-        with mock.patch('sys.stdin', [SECRET1]):
-            with mock.patch('time.time', return_value=0):
-                with mock.patch('builtins.print') as mock_print:
-                    runpy.run_module('mintotp', run_name='mintotp')
-                    mock_print.assert_not_called()
-                    runpy.run_module('mintotp', run_name='__main__')
-                    mock_print.assert_called_once_with('549419')
+    @mock.patch('time.time', mock.Mock(return_value=0))
+    @mock.patch('sys.argv', ['prog'])
+    @mock.patch('sys.stdin', [SECRET1, SECRET2])
+    @mock.patch('builtins.print')
+    def test_main_two_secrets(self, mock_print):
+        mintotp.main()
+        self.assertEqual(mock_print.mock_calls, [mock.call('549419'),
+                                                 mock.call('009551')])
+
+    @mock.patch('time.time', mock.Mock(return_value=2520))
+    @mock.patch('sys.argv', ['prog', '60'])
+    @mock.patch('sys.stdin', [SECRET1])
+    @mock.patch('builtins.print')
+    def test_main_step(self, mock_print):
+        mintotp.main()
+        mock_print.assert_called_once_with('626854')
+
+    @mock.patch('time.time', mock.Mock(return_value=0))
+    @mock.patch('sys.argv', ['prog', '30', '8'])
+    @mock.patch('sys.stdin', [SECRET1])
+    @mock.patch('builtins.print')
+    def test_main_digits(self, mock_print):
+        mintotp.main()
+        mock_print.assert_called_once_with('49549419')
+
+    @mock.patch('time.time', mock.Mock(return_value=0))
+    @mock.patch('sys.argv', ['prog', '30', '6', 'sha256'])
+    @mock.patch('sys.stdin', [SECRET1])
+    @mock.patch('builtins.print')
+    def test_main_digest(self, mock_print):
+        mintotp.main()
+        mock_print.assert_called_once_with('473535')
+
+    @mock.patch('time.time', mock.Mock(return_value=0))
+    @mock.patch('sys.argv', ['prog'])
+    @mock.patch('sys.stdin', [SECRET1])
+    @mock.patch('builtins.print')
+    def test_module(self, mock_print):
+        runpy.run_module('mintotp', run_name='mintotp')
+        mock_print.assert_not_called()
+        runpy.run_module('mintotp', run_name='__main__')
+        mock_print.assert_called_once_with('549419')
