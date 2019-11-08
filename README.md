@@ -26,9 +26,12 @@ Contents
   * [From GitHub](#from-github)
 * [Get Started](#get-started)
   * [With Base32 Key](#with-base32-key)
-  * [With Encrypted Base32 Key](#with-encrypted-base32-key)
   * [With QR Code](#with-qr-code)
-  * [With Encrypted QR Code](#with-encrypted-qr-code)
+* [Protect Key with GPG](#protect-key-with-gpg)
+  * [Install GPG](#install-gpg)
+  * [Encrypt Base32 Key with GPG](#encrypt-base32-key-with-gpg)
+  * [Encrypt QR Code with GPG](#encrypt-qr-code-with-gpg)
+* [Usage](#usage)
   * [Multiple Keys](#multiple-keys)
   * [Command Line Arguments](#command-line-arguments)
 * [Tradeoff](#tradeoff)
@@ -263,80 +266,6 @@ generate TOTP values for the purpose of logging into that account.
     the authenticator app.
 
 
-### With Encrypted Base32 Key
-
-The previous section uses an example key to show how this tool works. If
-you use this tool to generate TOTP values from a real secret key for a
-real account, you must encrypt your secret key to keep it safe.
-
-The steps below show the usage of GPG to encrypt our example secret key.
-You would have to replace this example secret key with a real secret key
-that you want to use to generate TOTP values.
-
- 1. Install GNU Privacy Guard (also known as GnuPG or GPG):
-
-    ```shell
-    # On macOS
-    brew install gnupg
-
-    # On Debian, Ubuntu, etc.
-    apt-get update
-    apt-get install gnupg
-    ```
-
- 2. Encrypt the secret key using GPG. First enter this command:
-
-    ```shell
-    gpg -c -o secret.gpg
-    ```
-
-    Then enter a [strong passphrase] when it prompts for it. Re-enter
-    the passphase to confirm it. Then paste the following key as input:
-
-    ```
-    ZYTYYE5FOAGW5ML7LRWUL4WTZLNJAMZS
-    ```
-
-    Press <kbd>enter</kbd> to end the line. Press <kbd>control</kbd> +
-    <kbd>d</kbd> to end input. The encrypted secret key would be saved
-    in a file named `secret.gpg`.
-
- 3. Generate TOTP value from the encrypted key:
-
-    ```shell
-    gpg -q -o - secret.gpg | mintotp
-    ```
-
- 4. You can also generate TOTP value and copy it to system clipboard:
-
-    ```shell
-    # On macOS
-    gpg -q -o - secret.gpg | mintotp | pbcopy
-
-    # On Linux
-    gpg -q -o - secret.gpg | mintotp | xclip
-    ```
-
-    Now you can easily paste the TOTP value to any login form that
-    requires it. On Linux, of course, you need to have `xclip` installed
-    to use it. On Debian, Ubuntu, etc. it can be installed with the
-    `apt-get install xclip` command. To paste the value copied into the
-    clipboard by `xclip`, middle-click on mouse.
-
- 5. In case you want to see the TOTP value on the terminal while it is
-    also copied to the system clipboard, use one of these commands:
-
-    ```shell
-    # On macOS
-    gpg -q -o - secret.gpg | mintotp | tee /dev/stderr | pbcopy
-
-    # On Linux
-    gpg -q -o - secret.gpg | mintotp | tee /dev/stderr | xclip
-    ```
-
-[strong passphrase]: https://www.gnupg.org/faq/gnupg-faq.html#strong_passphrase
-
-
 ### With QR Code
 
  1. Install `zbarimg` to scan QR codes:
@@ -387,17 +316,19 @@ that you want to use to generate TOTP values.
     authenticator app.
 
 
-### With Encrypted QR Code
+Protect Key with GPG
+--------------------
 
-The previous example uses an example QR code to show how this tool
-works. If you use this tool to generate TOTP values from a real QR code
-for a real account, you must encrypt your QR code to keep it safe.
+The previous sections use an example key and QR code to show how this
+tool works. If you use this tool to generate TOTP values from a real
+secret key for a real account, you must encrypt your secret key to keep
+it safe. The next two subsections explain how to protect the key with
+GNU Privacy Guard (also known as GnuPG or GPG).
 
-The steps below show the usage of GPG to encrypt our example QR code.
-You would have to replace the example QR code with a real QR code that
-you want to use to generate TOTP values.
 
- 1. Install GNU Privacy Guard (also known as GnuPG or GPG):
+### Install GPG
+
+ 1. Install GNU Privacy Guard:
 
     ```shell
     # On macOS
@@ -408,7 +339,82 @@ you want to use to generate TOTP values.
     apt-get install gnupg
     ```
 
- 2. Encrypt the QR code using GPG. First enter this command:
+ 2. Enter the following command to ensure that GPG is installed.
+
+    ```shell
+    gpg --version
+    ```
+
+    If GPG is installed properly, the command above should print its
+    version, license details, and cipher details.
+
+
+### Encrypt Base32 Key with GPG
+
+The steps below show the usage of GPG to encrypt our example secret key.
+You would have to replace this example secret key with a real secret key
+that you want to use to generate TOTP values.
+
+ 1. Encrypt the secret key using GPG. First enter this command:
+
+    ```shell
+    gpg -c -o secret.gpg
+    ```
+
+    Then enter a [strong passphrase] when it prompts for it. Re-enter
+    the passphase to confirm it. Then paste the following key as input:
+
+    ```
+    ZYTYYE5FOAGW5ML7LRWUL4WTZLNJAMZS
+    ```
+
+    Press <kbd>enter</kbd> to end the line. Press <kbd>ctrl</kbd> +
+    <kbd>d</kbd> to end input. The encrypted secret key would be saved
+    in a file named `secret.gpg`.
+
+ 2. Generate TOTP value from the encrypted key:
+
+    ```shell
+    gpg -q -o - secret.gpg | mintotp
+    ```
+
+ 3. You can also generate TOTP value and copy it to system clipboard:
+
+    ```shell
+    # On macOS
+    gpg -q -o - secret.gpg | mintotp | pbcopy
+
+    # On Linux
+    gpg -q -o - secret.gpg | mintotp | xclip
+    ```
+
+    Now you can easily paste the TOTP value to any login form that
+    requires it. On Linux, of course, you need to have `xclip` installed
+    to use it. On Debian, Ubuntu, etc. it can be installed with the
+    `apt-get install xclip` command. To paste the value copied into the
+    clipboard by `xclip`, middle-click on mouse.
+
+ 4. In case you want to see the TOTP value on the terminal while it is
+    also copied to the system clipboard, use one of these commands:
+
+    ```shell
+    # On macOS
+    gpg -q -o - secret.gpg | mintotp | tee /dev/stderr | pbcopy
+
+    # On Linux
+    gpg -q -o - secret.gpg | mintotp | tee /dev/stderr | xclip
+    ```
+
+[strong passphrase]: https://www.gnupg.org/faq/gnupg-faq.html#strong_passphrase
+
+
+### Encrypt QR Code with GPG
+
+The steps below show the usage of GPG to encrypt our example QR code.
+You would have to replace the example QR code with a real QR code that
+you want to use to generate TOTP values.
+
+ 1. Encrypt the QR code using GPG. First enter this command:
 
     ```shell
     gpg -c secret1.png
@@ -418,7 +424,7 @@ you want to use to generate TOTP values.
     the passphase to confirm it. The encrypted QR code would be saved in
     a file named `secret1.png.gpg`.
 
- 3. Delete the unencrypted QR code file securely:
+ 2. Delete the unencrypted QR code file securely:
 
     ```shell
     # On macOS
@@ -428,7 +434,7 @@ you want to use to generate TOTP values.
     shred -u secret1.png
     ```
 
- 4. Generate TOTP value from the encrypted QR code file:
+ 3. Generate TOTP value from the encrypted QR code file:
 
     ```shell
     zbarimg -q <(gpg -q -o - secret1.png.gpg) | sed 's/.*secret=\([^&]*\).*/\1/' | mintotp
@@ -455,6 +461,10 @@ you want to use to generate TOTP values.
     zbarimg -q <(gpg -q -o - secret1.png.gpg) | sed 's/.*secret=\([^&]*\).*/\1/' | mintotp | tee /dev/stderr | xclip
     ```
 
+
+Usage
+-----
+
 ### Multiple Keys
 
 This tool accepts one or more Base32 secret keys as standard input. Each
@@ -474,6 +484,7 @@ key must occur in its own line.
     ```shell
     zbarimg -q *.png | sed 's/.*secret=\([^&]*\).*/\1/' | mintotp
     ```
+
 
 ### Command Line Arguments
 
@@ -504,7 +515,7 @@ Here is a description of each argument:
   - `DIGEST`
 
     Cryptographic hash algorithm to use while generating TOTP value.
-    (Default: `sha1)
+    (Default: `sha1`)
 
     Possible values are `sha1`, `sha224`, `sha256`, `sha384`, and
     `sha512`.
