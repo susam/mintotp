@@ -382,10 +382,10 @@ that you want to use to generate TOTP values.
 
     ```shell
     # On macOS
-    gpg -q -o - secret.gpg | mintotp | pbcopy
+    gpg -q -o - secret.gpg | mintotp | tr -d '\n' | pbcopy
 
     # On Linux
-    gpg -q -o - secret.gpg | mintotp | xclip
+    gpg -q -o - secret.gpg | mintotp | tr -d '\n' | xclip
     ```
 
     Now you can easily paste the TOTP value to any login form that
@@ -399,10 +399,10 @@ that you want to use to generate TOTP values.
 
     ```shell
     # On macOS
-    gpg -q -o - secret.gpg | mintotp | tee /dev/stderr | pbcopy
+    gpg -q -o - secret.gpg | mintotp | tee /dev/stderr | tr -d '\n' | pbcopy
 
     # On Linux
-    gpg -q -o - secret.gpg | mintotp | tee /dev/stderr | xclip
+    gpg -q -o - secret.gpg | mintotp | tee /dev/stderr | tr -d '\n' | xclip
     ```
 
 [strong passphrase]: https://www.gnupg.org/faq/gnupg-faq.html#strong_passphrase
@@ -444,10 +444,10 @@ you want to use to generate TOTP values.
 
     ```shell
     # On macOS
-    zbarimg -q <(gpg -q -o - secret1.png.gpg) | sed 's/.*secret=\([^&]*\).*/\1/' | mintotp | pbcopy
+    zbarimg -q <(gpg -q -o - secret1.png.gpg) | sed 's/.*secret=\([^&]*\).*/\1/' | mintotp | tr -d '\n' | pbcopy
 
     # On Linux
-    zbarimg -q <(gpg -q -o - secret1.png.gpg) | sed 's/.*secret=\([^&]*\).*/\1/' | mintotp | xclip
+    zbarimg -q <(gpg -q -o - secret1.png.gpg) | sed 's/.*secret=\([^&]*\).*/\1/' | mintotp | tr -d '\n' | xclip
     ```
 
  5. In case you want to see the TOTP value on the terminal while it is
@@ -455,10 +455,10 @@ you want to use to generate TOTP values.
 
     ```shell
     # On macOS
-    zbarimg -q <(gpg -q -o - secret1.png.gpg) | sed 's/.*secret=\([^&]*\).*/\1/' | mintotp | tee /dev/stderr | pbcopy
+    zbarimg -q <(gpg -q -o - secret1.png.gpg) | sed 's/.*secret=\([^&]*\).*/\1/' | mintotp | tee /dev/stderr | tr -d '\n' | pbcopy
 
     # On Linux
-    zbarimg -q <(gpg -q -o - secret1.png.gpg) | sed 's/.*secret=\([^&]*\).*/\1/' | mintotp | tee /dev/stderr | xclip
+    zbarimg -q <(gpg -q -o - secret1.png.gpg) | sed 's/.*secret=\([^&]*\).*/\1/' | mintotp | tee /dev/stderr | tr -d '\n' | xclip
     ```
 
 
@@ -646,12 +646,12 @@ section presents some examples about this:
 
     ```shell
     # On macOS
-    oathtool --totp -b $(gpg -q -o - secret.gpg) | pbcopy
-    oathtool --totp -b $(zbarimg -q <(gpg -q -o - secret1.png.gpg) | sed 's/.*secret=\([^&]*\).*/\1/') | pbcopy
+    oathtool --totp -b $(gpg -q -o - secret.gpg) | tr -d '\n' | pbcopy
+    oathtool --totp -b $(zbarimg -q <(gpg -q -o - secret1.png.gpg) | sed 's/.*secret=\([^&]*\).*/\1/') | tr -d '\n' | pbcopy
 
     # On Linux
-    oathtool --totp -b $(gpg -q -o - secret.gpg) | xclip
-    oathtool --totp -b $(zbarimg -q <(gpg -q -o - secret1.png.gpg) | sed 's/.*secret=\([^&]*\).*/\1/') | xclip
+    oathtool --totp -b $(gpg -q -o - secret.gpg) | tr -d '\n' | xclip
+    oathtool --totp -b $(zbarimg -q <(gpg -q -o - secret1.png.gpg) | sed 's/.*secret=\([^&]*\).*/\1/') | tr -d '\n' | xclip
     ```
 
 
