@@ -47,7 +47,7 @@ coverage:
 	. ./venv && coverage html
 
 lint:
-	. ./venv && isort --quiet --diff
+	. ./venv && isort --quiet --diff .
 	. ./venv && pylama \
 	    -l pycodestyle,pyflakes,mccabe,pylint,isort \
 	    -i C0111,C0103,R0201
