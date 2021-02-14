@@ -13,7 +13,7 @@ def long_desc():
 
 setuptools.setup(
     name='mintotp',
-    version='0.2.0',
+    version='0.3.0-dev',
     author='Susam Pal',
     author_email='susam@susam.in',
     description='MinTOTP - Minimal TOTP Generator',
