@@ -66,7 +66,7 @@ key:
 
 
 # Package and distribute.
-dist: clean venv
+dist: clean
 	. ./venv && python3 setup.py sdist bdist_wheel
 	. ./venv && twine check dist/*
 	unzip -c dist/*.whl */METADATA
