@@ -13,7 +13,7 @@ def hotp(key, counter, digits=6, digest='sha1'):
     mac = hmac.new(key, counter, digest).digest()
     offset = mac[-1] & 0x0f
     binary = struct.unpack('>L', mac[offset:offset+4])[0] & 0x7fffffff
-    return str(binary)[-digits:].rjust(digits, '0')
+    return str(binary)[-digits:].zfill(digits)
 
 
 def totp(key, time_step=30, digits=6, digest='sha1'):
