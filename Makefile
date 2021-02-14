@@ -35,6 +35,7 @@ venv: FORCE
 
 deps:
 	touch venv
+	. ./venv && pip3 install -U importlib-metadata
 	. ./venv && \
 	    pip3 install pylama pylama-pylint coverage wheel twine coveralls
 
