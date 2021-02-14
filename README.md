@@ -93,7 +93,7 @@ in the code, so a brief description of the code is presented in this
 section. Here is the entire code presented once again for convenience:
 
 ```python
-#!/usr/bin/python3
+#!/usr/bin/env python3
 
 import base64
 import hmac
