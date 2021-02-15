@@ -1,6 +1,14 @@
 Changelog
 =========
 
+0.3.0 (2021-02-15)
+------------------
+
+### Changed
+
+- Use `str.zfill` instead of `str.rjust` for adding leading zeros.
+
+
 0.2.0 (2019-08-13)
 ------------------
 
