@@ -1,11 +1,6 @@
 #!/usr/bin/env python3
 
-import base64
-import hmac
-import struct
-import sys
-import time
-
+import base64, hmac, struct, sys, time
 
 def hotp(key, counter, digits=6, digest='sha1'):
     key = base64.b32decode(key.upper() + '=' * ((8 - len(key)) % 8))
