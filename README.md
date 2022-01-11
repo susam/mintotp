@@ -7,15 +7,13 @@ MinTOTP is a minimal TOTP generator written in Python.
 [![PyPI Package][PyPI SVG]][pypi]
 [![PyPI Hits][Hits SVG]][pypi]
 [![MIT License][License SVG]][L]
-[![Build Status][Travis SVG]][travis]
+
 
 [Source SVG]: https://img.shields.io/badge/view-source-brightgreen.svg
 [src]: mintotp.py
 [PyPI SVG]: https://img.shields.io/pypi/v/mintotp.svg
 [Hits SVG]: https://img.shields.io/pypi/dm/mintotp
 [License SVG]: https://img.shields.io/badge/license-MIT-blue.svg
-[Travis SVG]: https://travis-ci.com/susam/mintotp.svg?branch=main
-[travis]: https://travis-ci.com/susam/mintotp
 
 
 Contents
