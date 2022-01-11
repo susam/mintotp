@@ -15,7 +15,7 @@ help:
 	@echo 'git add .'
 	@echo 'git status'
 	@echo 'git commit'
-	@echo 'git push origin master'
+	@echo 'git push origin main'
 	@echo
 	@echo 'make upload verify-upload'
 	@echo 'open https://pypi.org/project/mintotp/'

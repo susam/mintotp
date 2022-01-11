@@ -14,7 +14,7 @@ MinTOTP is a minimal TOTP generator written in Python.
 [PyPI SVG]: https://img.shields.io/pypi/v/mintotp.svg
 [Hits SVG]: https://img.shields.io/pypi/dm/mintotp
 [License SVG]: https://img.shields.io/badge/license-MIT-blue.svg
-[Travis SVG]: https://travis-ci.com/susam/mintotp.svg?branch=master
+[Travis SVG]: https://travis-ci.com/susam/mintotp.svg?branch=main
 [travis]: https://travis-ci.com/susam/mintotp
 
 
@@ -313,7 +313,7 @@ generate TOTP values for the purpose of logging into that account.
     "Scan a barcode", and scan the QR code shown above in step 3. A
     6-digit TOTP value should appear for the new key.
 
- 6. Run the command in step 3 again and verify that the TOTP value
+ 6. Run the command in step 4 again and verify that the TOTP value
     printed by MinTOTP matches the TOTP value that appears in the
     authenticator app.
 
@@ -664,7 +664,7 @@ Here is a list of useful links about this project:
 
   - [Documentation](https://github.com/susam/mintotp#readme)
   - [Latest release][pypi]
-  - [Changelog](https://github.com/susam/mintotp/blob/master/CHANGES.md)
+  - [Changelog](https://github.com/susam/mintotp/blob/main/CHANGES.md)
   - [Issue tracker](https://github.com/susam/mintotp/issues)
   - [Source code](https://github.com/susam/mintotp)
 
