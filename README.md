@@ -29,8 +29,8 @@ Contents
   * [With QR Code](#with-qr-code)
 * [Protect Key with GPG](#protect-key-with-gpg)
   * [Install GPG](#install-gpg)
-  * [Encrypt Base32 Key with GPG](#encrypt-base32-key-with-gpg)
-  * [Encrypt QR Code with GPG](#encrypt-qr-code-with-gpg)
+  * [Encrypt Base32 Key With GPG](#encrypt-base32-key-with-gpg)
+  * [Encrypt QR Code With GPG](#encrypt-qr-code-with-gpg)
 * [Usage](#usage)
   * [Multiple Keys](#multiple-keys)
   * [Command Line Arguments](#command-line-arguments)
@@ -349,7 +349,7 @@ GNU Privacy Guard (also known as GnuPG or GPG).
     version, license details, and cipher details.
 
 
-### Encrypt Base32 Key with GPG
+### Encrypt Base32 Key With GPG
 
 The steps below show the usage of GPG to encrypt our example secret key.
 You would have to replace this example secret key with a real secret key
@@ -408,7 +408,7 @@ that you want to use to generate TOTP values.
 [strong passphrase]: https://www.gnupg.org/faq/gnupg-faq.html#strong_passphrase
 
 
-### Encrypt QR Code with GPG
+### Encrypt QR Code With GPG
 
 The steps below show the usage of GPG to encrypt our example QR code.
 You would have to replace the example QR code with a real QR code that
@@ -583,23 +583,8 @@ Alternative: OATH Toolkit
 -------------------------
 
 There is an `oathtool` command available in OATH Toolkit that can also
-generate TOTP values from TOTP secret keys. However, one of the issues
-currently with `oathtool` is that it requires the secret key to be
-provided as a command line argument which is generally insecure because
-command line arguments are visible to all system users and processes.
-See the following two posts to read more about this:
-
-  - [Debian bug report: oathtool: has no secure way to provide a key][post1]
-  - [OATH-Toolkit-help: oathtool should not require secret key on command line][post2]
-
-[post1]: https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=839278
-[post2]: https://lists.gnu.org/archive/html/oath-toolkit-help/2012-01/msg00008.html
-
-The `oathtool` command is intended to be used as a debugging tool and
-not for generating real TOTP values for real accounts. It would remain
-so until the issue described in the two URLs above is fixed. However, it
-is still good to be aware that `oathtool` can do what MinTOTP does. This
-section presents some examples about this:
+generate TOTP values from TOTP secret keys. This section presents some
+examples that show how `oathtool` can be used to do what MinTOTP does.
 
  1. Install OATH Toolkit:
 
@@ -615,43 +600,43 @@ section presents some examples about this:
  2. Generate TOTP from a Base32 key:
 
     ```shell
-    oathtool --totp -b ZYTYYE5FOAGW5ML7LRWUL4WTZLNJAMZS
+    oathtool --totp -b - <<< ZYTYYE5FOAGW5ML7LRWUL4WTZLNJAMZS
     ```
 
  3. Generate TOTP from an encrypted Base32 key:
 
     ```shell
-    oathtool --totp -b $(gpg -q -o - secret.gpg)
+    gpg -q -o - secret.gpg | oathtool --totp -b -
     ```
 
-    Section [With Encrypted Base32 Key](#with-encrypted-base32-key)
+    Section [Encrypt Base32 Key With GPG](#encrypt-base32-key-with-gpg)
     explains how to create the encrypted key (`secret.gpg`) with GPG.
 
  4. Generate TOTP from a QR code:
 
     ```shell
-    oathtool --totp -b $(zbarimg -q secret1.png | sed 's/.*secret=\([^&]*\).*/\1/')
+    zbarimg -q secret1.png | sed 's/.*secret=\([^&]*\).*/\1/' | oathtool --totp -b -
     ```
 
  5. Generate TOTP from an encrypted QR code:
 
     ```shell
-    oathtool --totp -b $(zbarimg -q <(gpg -q -o - secret1.png.gpg) | sed 's/.*secret=\([^&]*\).*/\1/')
+    zbarimg -q <(gpg -q -o - secret1.png.gpg) | sed 's/.*secret=\([^&]*\).*/\1/' | oathtool --totp -b -
     ```
 
-    Section [With Encrypted QR Code](#with-encrypted-qr-code) explains
+    Section [Encrypt QR Code With GPG](#encrypt-qr-code-with-gpg) explains
     how to create the encrypted QR code (`secret1.png.gpg`) with GPG.
 
  6. Generate TOTP value and copy it to system clipboard:
 
     ```shell
     # On macOS
-    oathtool --totp -b $(gpg -q -o - secret.gpg) | tr -d '\n' | pbcopy
-    oathtool --totp -b $(zbarimg -q <(gpg -q -o - secret1.png.gpg) | sed 's/.*secret=\([^&]*\).*/\1/') | tr -d '\n' | pbcopy
+    gpg -q -o - secret.gpg | oathtool --totp -b - | tr -d '\n' | pbcopy
+    zbarimg -q <(gpg -q -o - secret1.png.gpg) | sed 's/.*secret=\([^&]*\).*/\1/' | oathtool --totp -b - | tr -d '\n' | pbcopy
 
     # On Linux
-    oathtool --totp -b $(gpg -q -o - secret.gpg) | tr -d '\n' | xclip
-    oathtool --totp -b $(zbarimg -q <(gpg -q -o - secret1.png.gpg) | sed 's/.*secret=\([^&]*\).*/\1/') | tr -d '\n' | xclip
+    gpg -q -o - secret.gpg | oathtool --totp -b - | tr -d '\n' | xclip
+    zbarimg -q <(gpg -q -o - secret1.png.gpg) | sed 's/.*secret=\([^&]*\).*/\1/' | oathtool --totp -b - | tr -d '\n' | xclip
     ```
 
 
