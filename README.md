@@ -362,7 +362,7 @@ that you want to use to generate TOTP values.
     ```
 
     Then enter a [strong passphrase] when it prompts for it. Re-enter
-    the passphase to confirm it. Then paste the following key as input:
+    the passphrase to confirm it. Then paste the following key as input:
 
     ```
     ZYTYYE5FOAGW5ML7LRWUL4WTZLNJAMZS
@@ -421,7 +421,7 @@ you want to use to generate TOTP values.
     ```
 
     Then enter a [strong passphrase] when it prompts for it. Re-enter
-    the passphase to confirm it. The encrypted QR code would be saved in
+    the passphrase to confirm it. The encrypted QR code would be saved in
     a file named `secret1.png.gpg`.
 
  2. Delete the unencrypted QR code file securely:
