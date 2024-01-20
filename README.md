@@ -295,7 +295,7 @@ generate TOTP values for the purpose of logging into that account.
     QR-Code:otpauth://totp/alice:bob?secret=ZYTYYE5FOAGW5ML7LRWUL4WTZLNJAMZS
     ```
 
-    Note that the secret key in the URI is same as the secret key we
+    Note that the secret key in the URI is the same as the secret key we
     used in the previous sections.
 
  4. Now enter this command to extract the secret key from the QR code
@@ -542,7 +542,7 @@ Here are some usage examples of these command line arguments:
 
 The behaviour of the tool is undefined if it is used in any way other
 than what is described above. For example, although surplus command line
-arguments are ignored currently, this behaviour may change in future, so
+arguments are ignored currently, this behaviour may change in the future, so
 what should happen in case of surplus arguments is left undefined in
 this document.
 
