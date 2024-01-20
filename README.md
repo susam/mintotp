@@ -54,7 +54,7 @@ evidence:
   - Something only the user is, e.g., biometrics.
 
 A TOTP value serves as the second factor, i.e., it proves that the user
-is in possession of a device (e.g., mobile phone) that contains a TOTP
+has a device (e.g., mobile phone) that contains a TOTP
 secret key from which the TOTP value is generated. Usually the service
 provider that provides a user's account also issues a secret key encoded
 either as a Base32 string or as a QR code. This secret key is added to
@@ -488,7 +488,7 @@ key must occur in its own line.
 
 ### Command Line Arguments
 
-In order to keep this tool as minimal as possible, it does not come with
+To keep this tool as minimal as possible, it does not come with
 any command line options. In fact, it does not even have the `--help`
 option. It does support a few command line arguments though. Since there
 is no help output from the tool, this section describes the command line
