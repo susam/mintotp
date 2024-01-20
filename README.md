@@ -133,7 +133,7 @@ HOTP value as output.
 The `totp()` function implements the TOTP algorithm. It is a thin
 wrapper around the HOTP algorithm. The TOTP value is obtained by
 invoking the HOTP function with the secret key and the number of time
-intervals (30 second intervals by default) that have elapsed since Unix
+intervals (30-second intervals by default) that have elapsed since Unix
 epoch (1970-01-01 00:00:00 UTC).
 
 [RFC 2104-5]: https://tools.ietf.org/html/rfc4226#section-5
