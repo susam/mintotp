@@ -392,7 +392,7 @@ that you want to use to generate TOTP values.
     requires it. On Linux, of course, you need to have `xclip` installed
     to use it. On Debian, Ubuntu, etc. it can be installed with the
     `apt-get install xclip` command. To paste the value copied into the
-    clipboard by `xclip`, middle-click on mouse.
+    clipboard by `xclip`, middle-click on your mouse.
 
  4. In case you want to see the TOTP value on the terminal while it is
     also copied to the system clipboard, use one of these commands:
